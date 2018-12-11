@@ -1,0 +1,64 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'DayDrinking' do
+    # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+    # use_frameworks!
+    
+    # Pods for DayDrinking
+    
+    pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga/yoga.podspec'
+    pod 'GoogleMaps'
+    
+    pod 'Firebase/Core'
+    pod 'Firebase/Auth'
+    pod 'Firebase/Database'
+    pod 'Firebase/Storage'
+    pod 'FacebookSDK'
+    pod 'FBSDKCoreKit'
+    pod 'FBSDKShareKit'
+    pod 'FBSDKLoginKit'
+    pod 'Google-Mobile-Ads-SDK'
+    
+    #  pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
+    
+    rn_path = '../node_modules/react-native'
+    pod 'yoga', path: "#{rn_path}/ReactCommon/yoga/yoga.podspec"
+    pod 'React', path: rn_path, subspecs: [
+    'Core',
+    'RCTActionSheet',
+    'RCTAnimation',
+    'RCTGeolocation',
+    'RCTImage',
+    'RCTLinkingIOS',
+    'RCTNetwork',
+    'RCTSettings',
+    'RCTText',
+    'RCTVibration',
+    'RCTWebSocket'
+    ]
+    
+    #  pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
+    
+    #  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+    
+    #  pod 'react-native-fbsdk', :path => '../node_modules/react-native-fbsdk'
+    
+    #  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
+    
+    #  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+    
+    pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
+    
+end
+
+post_install do |installer|
+    installer.pods_project.targets.each do |target|
+        if target.name == "React"
+            target.remove_from_project
+        end
+    end
+end
+
+
+

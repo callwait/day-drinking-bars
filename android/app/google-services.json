@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "1071920069668",
+    "firebase_url": "https://daydrinkbarapp.firebaseio.com",
+    "project_id": "daydrinkbarapp",
+    "storage_bucket": "daydrinkbarapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071920069668:android:b90b010bfffc1725",
+        "android_client_info": {
+          "package_name": "com.utility.DayDrinking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1071920069668-hdhn0ijq5ogloe6cnstkm7k16g78tffu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.utility.DayDrinking",
+            "certificate_hash": "e12e9d07d91303e6712a94820550767c4fae6916"
+          }
+        },
+        {
+          "client_id": "1071920069668-65spkqdvdgj7ccsvk7v6gl0r6e44hefj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTSC6i2te6wbJ9YQ_TxbUlkAP7znuTClI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1071920069668-65spkqdvdgj7ccsvk7v6gl0r6e44hefj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1071920069668-d2qsecu19j2sbij99ra9tu1nttpjst7p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.utility.DayDrinking"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
