@@ -18,6 +18,7 @@ import { Content, Icon } from "native-base";
 import { Rating } from 'react-native-elements';
 const RATING_IMAGE = require('../../../assets/img/rating.png');
 import { firebaseApp,userRef,rootRef,BarRef } from '../Firebase/Firebase';// use for firebase
+import { sampleApi } from '../RNFetchBlob/RNFetchBlob';
 import FastImage from 'react-native-fast-image'
 
 var allBars=[];
@@ -74,25 +75,24 @@ export default class BarList extends React.Component {
   //get all bars.
   async getBarList() {
     allBars=[]
-    
-    BarRef.on('value', (dataSnapshot) => {
-      dataSnapshot.forEach((child) => {
-        console.log("bar listing called",child.val());
-        allBars.push({
-          Bar_id:child.val().bar_id,
-          Bar_name: child.val().bar_name,
-          Bar_address: child.val().bar_address,
-          Bar_description:child.val().bar_description,
-          Bar_image:child.val().bar_gallery.imageUrl[0]
-        });
-         
-      });
-       
-      this.setState({
-        BarlistDataSource: this.state.BarlistDataSource.cloneWithRows(allBars)
-      });
 
-    });
+    sampleApi().then(result => {
+      result.data.items.forEach((child) => {
+        allBars.push({
+          Bar_id:child.id,
+          Bar_name: child.title,
+          Bar_address: child.address,
+          Bar_description:child.description,
+          Bar_image:child.featured
+        });
+      });
+      this.setState({
+        BarlistDataSource: this.state.BarlistDataSource.cloneWithRows(allBars),
+        isLoading: false
+      });
+    }).catch(err => {
+      console.log(err);
+    })
   }
   
   /**
