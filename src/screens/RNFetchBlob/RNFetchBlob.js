@@ -1,8 +1,8 @@
 import RNFetchBlob from 'rn-fetch-blob'
 
-export const sampleApi = function() {
+export const sampleApi = function(paginate) {
   return new Promise((resolve, reject) => {
-    RNFetchBlob.fetch('GET', 'http://192.168.23.211:5001/api/v1/bars?paginate=0&perPage=1000')
+    RNFetchBlob.fetch('GET', `http://localhost:5001/api/v1/bars?paginate=${paginate}&perPage=20`)
       .then((res) => {
         let status = res.info().status;
 

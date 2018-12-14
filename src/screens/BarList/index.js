@@ -37,6 +37,7 @@ export default class BarList extends React.Component {
     this.state = {
       BarlistDataSource: BarlistDataSource,
       isLoading: true,
+      paginate: 0
     };
   }
 
@@ -64,7 +65,7 @@ export default class BarList extends React.Component {
 
   componentWillMount() {
 
-    this.getBarList();
+    this.getBarList(this.state.paginate);
 
   }
 
@@ -73,10 +74,8 @@ export default class BarList extends React.Component {
   }
 
   //get all bars.
-  async getBarList() {
-    allBars=[]
-
-    sampleApi().then(result => {
+  async getBarList(paginate) {
+    sampleApi(paginate).then(result => {
       result.data.items.forEach((child) => {
         allBars.push({
           Bar_id:child.id,
@@ -88,7 +87,8 @@ export default class BarList extends React.Component {
       });
       this.setState({
         BarlistDataSource: this.state.BarlistDataSource.cloneWithRows(allBars),
-        isLoading: false
+        isLoading: false,
+        paginate: this.state.paginate + 1
       });
     }).catch(err => {
       console.log(err);
@@ -150,6 +150,12 @@ export default class BarList extends React.Component {
   );
 };
 
+_onEndReached() {
+  if (!this.state.isLoading) {
+    this.getBarList(this.state.paginate);
+  }
+}
+
   render() {
 
     let loading = this.state.isLoading
@@ -160,8 +166,10 @@ export default class BarList extends React.Component {
           removeClippedSubviews={false}
           dataSource={this.state.BarlistDataSource}
           showsVerticalScrollIndicator={false}
+          onEndReached={this._onEndReached.bind(this)}
           renderRow={this.renderRow.bind(this)}
         />
+
 
         <Modal
                 transparent={true}
