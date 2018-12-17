@@ -9,7 +9,8 @@ import {
   Dimensions,
   Image,
   AsyncStorage,
-  ImageBackground
+  ImageBackground,
+  TouchableHighlight
 } from 'react-native';
 import Styles from './styles'; // importing style file
 import Colors from '../../styles/colors';  // use for style and color
@@ -18,6 +19,8 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { AdMobBanner } from 'react-native-admob';
 import ActionButton from 'react-native-action-button'; // use for action button
 const { width, height } = Dimensions.get('window'); 
+import { getBarByLocation } from '../RNFetchBlob/RNFetchBlob-mock';
+// import flagPinkImg from '../../assets/flagPinkImg';
 
 /**
  * set banner
@@ -40,6 +43,7 @@ export default class Home extends React.Component {
       mapRegion: null,
       lastLat: null,
       lastLong: null,
+      bars: []
     };
   }
 
@@ -52,6 +56,16 @@ export default class Home extends React.Component {
         latitudeDelta:  0.00922*1.5,
         longitudeDelta: 0.00421*1.5
       }
+      getBarByLocation().then(result => {
+        var bars = result.data.items.map(item => {
+          // item.latitude  = region.latitude;
+          // item.longitude  = region.longitude;
+          return item;
+        })
+        this.setState({
+          bars: bars
+        })
+      })
     this.onRegionChange(region, region.latitude, region.longitude);
     }, (error)=>console.log(error));
   }
@@ -70,10 +84,10 @@ export default class Home extends React.Component {
 
   onRegionChange(region, lastLat, lastLong) {
     this.setState({
-      mapRegion: region,
+      // mapRegion: region,
       // If there are no new values set the current ones
-      lastLat: lastLat || this.state.lastLat,
-      lastLong: lastLong || this.state.lastLong
+      // lastLat: lastLat,
+      // lastLong: lastLong
     });
   }
 
@@ -133,7 +147,7 @@ export default class Home extends React.Component {
   * view design with list view
   */  
   render() {
-
+    let navigate = this.props;
     return (
       <View style={Styles.container}>
        <MapView
@@ -142,7 +156,21 @@ export default class Home extends React.Component {
           showsUserLocation={true}
           followUserLocation={true}
           onRegionChange={this.onRegionChange.bind(this)}
-          onPress={this.onMapPress.bind(this)}>             
+          onPress={this.onMapPress.bind(this)}>
+          {this.state.bars.map(bar => (
+            <MapView.Marker
+              coordinate={{latitude: bar.latitude, longitude: bar.longitude}}
+              title={bar.title}
+              description={bar.description}>
+              {/* <MapView.Callout tooltip>
+                <TouchableHighlight onPress= {() => navigate('BarDetail',{bar_id : bar.id})} underlayColor='#dddddd'>
+                    <View style={{backgroundColor: "orange"}}>
+                        <Text>{bar.title}{"\n"}{bar.description}</Text>
+                    </View>
+                </TouchableHighlight>
+              </MapView.Callout> */}
+            </MapView.Marker>
+          ))}
         </MapView>
         <BannerExample>
             <AdMobBanner
@@ -153,8 +181,6 @@ export default class Home extends React.Component {
             />
 
             </BannerExample>
-      
-
       <ActionButton
             buttonColor={Colors.black}
             icon={<Icon type="Feather"  name='plus' style={{color:Colors.colorPrimary, fontSize:25}}/>}            

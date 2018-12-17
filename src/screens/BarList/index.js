@@ -18,7 +18,7 @@ import { Content, Icon } from "native-base";
 import { Rating } from 'react-native-elements';
 const RATING_IMAGE = require('../../../assets/img/rating.png');
 import { firebaseApp,userRef,rootRef,BarRef } from '../Firebase/Firebase';// use for firebase
-import { sampleApi } from '../RNFetchBlob/RNFetchBlob';
+import { getBars } from '../RNFetchBlob/RNFetchBlob-mock';
 import FastImage from 'react-native-fast-image'
 
 var allBars=[];
@@ -75,14 +75,14 @@ export default class BarList extends React.Component {
 
   //get all bars.
   async getBarList(paginate) {
-    sampleApi(paginate).then(result => {
+    getBars(paginate).then(result => {
       result.data.items.forEach((child) => {
         allBars.push({
           Bar_id:child.id,
           Bar_name: child.title,
           Bar_address: child.address,
           Bar_description:child.description,
-          Bar_image:child.featured
+          Bar_image:child.featured.length ? child.featured[0] : null
         });
       });
       this.setState({

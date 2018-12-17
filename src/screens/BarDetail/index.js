@@ -18,7 +18,8 @@ import styles from '../Home/styles';
 import { Button } from 'react-native-elements';
 import ActionButton from 'react-native-action-button'; // use for action button
 import { firebaseApp,userRef,rootRef,BarRef } from '../Firebase/Firebase';// use for firebase
-import FastImage from 'react-native-fast-image'
+import FastImage from 'react-native-fast-image';
+import { getBarDetail } from '../RNFetchBlob/RNFetchBlob-mock';
 
 const RATING_IMAGE = require('../../../assets/img/rating.png');
 // import FastImage from 'react-native-fast-image';
@@ -121,19 +122,29 @@ export default class BarDetail extends React.Component {
   const id = state.params.bar_id;
 
   console.log('Bar Detail', id);
-  BarRef.orderByChild("bar_id").equalTo(id).on('value', (dataSnapshot) => {
-    dataSnapshot.forEach((child) => {
-      console.log('Bar Detail', child.val());
-      this.setState({barName : child.val().bar_name});
-      this.setState({barAddress : child.val().bar_address});
-      this.setState({barDesctiprion : child.val().bar_description});
-      this.setState({bariImages : child.val().bar_gallery.imageUrl});
+  // BarRef.orderByChild("bar_id").equalTo(id).on('value', (dataSnapshot) => {
+  //   dataSnapshot.forEach((child) => {
+  //     console.log('Bar Detail', child.val());
+  //     this.setState({barName : child.val().bar_name});
+  //     this.setState({barAddress : child.val().bar_address});
+  //     this.setState({barDesctiprion : child.val().bar_description});
+  //     this.setState({bariImages : child.val().bar_gallery.imageUrl});
 
-      this.props.navigation.setParams({
-        barText: this.state.barName,
-      });
+  //     this.props.navigation.setParams({
+  //       barText: this.state.barName,
+  //     });
+  //   });
+  // });
+  getBarDetail(id).then(result => {
+    let bar = result.data.Bar;
+    this.setState({barName : bar.title});
+    this.setState({barAddress : bar.address});
+    this.setState({barDesctiprion : bar.description});
+    this.setState({bariImages : bar.featured});
+    this.props.navigation.setParams({
+      barText: this.state.barName,
     });
-  });
+  })
 }
 
 
