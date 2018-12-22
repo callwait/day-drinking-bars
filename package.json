@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "pods": "cd ios && pod install && chmod +x Pods/'Target Support Files'/Pods-DayDrinking/Pods-DayDrinking-resources.sh"
   },
   "dependencies": {
     "moment": "^2.22.2",
