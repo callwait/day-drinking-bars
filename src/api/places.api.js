@@ -24,4 +24,16 @@ export default class PlacesApi extends Api {
       throw Error(message);
     }
   };
+
+  fetchPlace = async id => {
+    try {
+      const response = await this.request(`place/${id}`);
+      if (response.message || response.error) {
+        return Promise.reject(response);
+      }
+      return response;
+    } catch ({ message }) {
+      throw Error(message);
+    }
+  };
 }

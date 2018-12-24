@@ -19,6 +19,9 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { AdMobBanner } from 'react-native-admob';
 import ActionButton from 'react-native-action-button'; // use for action button
 import PlacesApi from '../../api/places.api';
+
+const Places = new PlacesApi();
+
 // import flagPinkImg from '../../assets/flagPinkImg';
 
 /**
@@ -58,6 +61,7 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
+    this.getPlaces();
     this.props.navigation.setParams({
       getCurrentPosition: this.getCurrentPosition.bind(this)
     });
@@ -84,26 +88,49 @@ export default class Home extends React.Component {
 
   getCurrentPosition() {
     navigator.geolocation.getCurrentPosition(position => {
-      console.log('myPos ', position);
+      position = {
+        coords: {
+          latitude: '41.890312',
+          longitude: '-87.630767'
+        }
+      };
       this.onRegionChange(position);
     });
   }
 
+  getPlaces(lat = '41.890312', long = '-87.630767') {
+    Places.getNearPlaces(lat, long)
+      .then(bars => {
+        this.setState({ bars });
+        this.props.navigation.setParams({
+          places: bars
+        });
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
   onRegionChange(position) {
+    if (!position) return;
+    let mapRegion = {
+      latitudeDelta: 0.00922 * 1.5,
+      longitudeDelta: 0.00421 * 1.5
+    };
     if (position.coords) {
-      console.log('new position', position);
-      const mapRegion = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        latitudeDelta: 0.00922 * 1.5,
-        longitudeDelta: 0.00421 * 1.5
-      };
-      this.setState({ mapRegion });
+      mapRegion.latitude = position.coords.latitude;
+      mapRegion.longitude = position.coords.longitude;
+    } else {
+      mapRegion.latitude = position.latitude;
+      mapRegion.longitude = position.longitude;
     }
+    this.setState({ mapRegion });
+    console.log('position', mapRegion);
+    this.getPlaces(mapRegion.latitude, mapRegion.longitude);
   }
 
   onMapPress(e) {
-    this.onRegionChange(e.nativeEvent);
+    //this.onRegionChange(e.nativeEvent);
   }
 
   onPress = () => {
@@ -127,7 +154,13 @@ export default class Home extends React.Component {
     },
     headerTintColor: '#fff',
     headerLeft: (
-      <TouchableOpacity onPress={() => navigation.navigate('BarList')}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('BarList', {
+            places: navigation.state.params.places
+          })
+        }
+      >
         <View style={{ padding: 10 }}>
           <Icon
             type="Feather"
@@ -156,7 +189,7 @@ export default class Home extends React.Component {
    */
 
   render() {
-    let navigate = this.props;
+    let navigate = this.props.navigation.navigate;
     return (
       <View style={Styles.container}>
         <MapView
@@ -164,7 +197,7 @@ export default class Home extends React.Component {
           region={this.state.mapRegion}
           showsUserLocation={true}
           followUserLocation={true}
-          onRegionChange={this.onRegionChange.bind(this)}
+          onRegionChangeComplete={this.onRegionChange.bind(this)}
           onPress={this.onMapPress.bind(this)}
         >
           {this.state.bars.map(bar => (
@@ -174,13 +207,20 @@ export default class Home extends React.Component {
               title={bar.title}
               description={bar.description}
             >
-              {/* <MapView.Callout tooltip>
-                <TouchableHighlight onPress= {() => navigate('BarDetail',{bar_id : bar.id})} underlayColor='#dddddd'>
-                    <View style={{backgroundColor: "orange"}}>
-                        <Text>{bar.title}{"\n"}{bar.description}</Text>
-                    </View>
+              <MapView.Callout tooltip>
+                <TouchableHighlight
+                  onPress={() => navigate('BarDetail', { id: bar.id })}
+                  underlayColor="#dddddd"
+                >
+                  <View style={{ backgroundColor: 'orange' }}>
+                    <Text>
+                      {bar.title}
+                      {'\n'}
+                      {bar.description}
+                    </Text>
+                  </View>
                 </TouchableHighlight>
-              </MapView.Callout> */}
+              </MapView.Callout>
             </MapView.Marker>
           ))}
         </MapView>

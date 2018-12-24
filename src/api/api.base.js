@@ -1,4 +1,4 @@
-import { endpoint } from '../../config';
+import config from '../../config';
 
 /**
  * @name Class Api
@@ -9,7 +9,7 @@ import { endpoint } from '../../config';
 export default class Api {
   constructor(resource) {
     this.resource = resource;
-    this.backendUrl = endpoint;
+    this.backendUrl = config.endpoint;
   }
 
   getHeaders = async () => ({
@@ -47,12 +47,12 @@ export default class Api {
       headers: await this.getHeaders()
     });
 
-  request = async (url, params) =>
+  request = (url, params) =>
     fetch(
       `${this.backendUrl}/${url}`,
       Object.assign(
         {
-          headers: await this.getHeaders()
+          headers: this.getHeaders()
         },
         params
       )

@@ -1,3 +1,3 @@
 export default {
-  endpoind: 'http://localhost:5001'
+  endpoint: 'https://daydrinking.herokuapp.com'
 };
