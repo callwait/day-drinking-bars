@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>FacebookAppID</key>
 	<string>1869996043127112</string>
 	<key>FacebookDisplayName</key>
@@ -55,16 +55,16 @@
 			</dict>
 		</dict>
 	</dict>
-  <key>NSPhotoLibraryUsageDescription</key>
-  <string>DayDrinking would like to store a photo.</string>
-  <key>NSCameraUsageDescription</key>
-  <string>DayDrinking would like to use camera.</string>
-  <key>NSMicrophoneUsageDescription</key>
-  <string>DayDrinking would like to use microphone.</string>
-  <key>NSPhotoLibraryAddUsageDescription</key>
-  <string>DayDrinking would like to add a photo.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>DayDrinking would like to use camera.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>DayDrinking would like to use microphone.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>DayDrinking would like to add a photo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>DayDrinking would like to store a photo.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

@@ -1136,7 +1136,8 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = GR249U759A;
+						DevelopmentTeam = N56B95S93C;
+						ProvisioningStyle = Manual;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1880,9 +1881,11 @@
 			baseConfigurationReference = 399B25FD30968E47E69A70F6 /* Pods-DayDrinking.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = GR249U759A;
+				DEVELOPMENT_TEAM = N56B95S93C;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1908,8 +1911,10 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.utility.DayDrinking;
+				PRODUCT_BUNDLE_IDENTIFIER = com.DayDrinking.bars;
 				PRODUCT_NAME = DayDrinking;
+				PROVISIONING_PROFILE = "a9379b72-497b-4939-bf46-516c1aaf0127";
+				PROVISIONING_PROFILE_SPECIFIER = DayDrinking;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1919,8 +1924,10 @@
 			baseConfigurationReference = DC5BDCA8742EB886794F6D45 /* Pods-DayDrinking.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GR249U759A;
+				DEVELOPMENT_TEAM = N56B95S93C;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1946,8 +1953,10 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.utility.DayDrinking;
+				PRODUCT_BUNDLE_IDENTIFIER = com.DayDrinking.bars;
 				PRODUCT_NAME = DayDrinking;
+				PROVISIONING_PROFILE = "a9379b72-497b-4939-bf46-516c1aaf0127";
+				PROVISIONING_PROFILE_SPECIFIER = DayDrinking;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
