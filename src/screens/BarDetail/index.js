@@ -93,6 +93,11 @@ export default class BarDetail extends React.Component {
 
   render() {
     let loading = this.state.isLoading;
+
+    let mainImage = false;
+    if (this.state.placeInfo.images && this.state.placeInfo.images[0]) {
+      mainImage = this.state.placeInfo.images[0];
+    }
     return (
       <View style={Styles.container}>
         <Text style={Styles.titleText}>{this.state.placeInfo.address}</Text>
@@ -137,11 +142,11 @@ export default class BarDetail extends React.Component {
         <View>
           <View style={Styles.atmosphereView}>
             <View>
-              {this.state.bariImages[0] != null ? (
+              {mainImage && (
                 <FastImage
                   style={Styles.atmosphereImage}
                   source={{
-                    uri: this.state.bariImages[0],
+                    uri: mainImage,
                     priority: FastImage.priority.normal
                   }}
                   onLoadEnd={() => {
@@ -149,7 +154,7 @@ export default class BarDetail extends React.Component {
                   }}
                   resizeMode={FastImage.resizeMode.stretch}
                 />
-              ) : null}
+              )}
             </View>
 
             <View style={{ flexDirection: 'column' }}>

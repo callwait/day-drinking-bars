@@ -81,8 +81,8 @@ export default class Home extends React.Component {
   getCurrentPosition() {
     getUserLocation().then(position => {
       this.onRegionChange({
-        latitude: 41.890312, //position[0],
-        longitude: -87.630767, //position[1],
+        latitude: position[0], // 41.890312,
+        longitude: position[1], // -87.630767
         ...defaultZoom
       });
     });
@@ -192,7 +192,10 @@ export default class Home extends React.Component {
           {this.state.bars.map(bar => (
             <MapView.Marker
               key={bar.id}
-              coordinate={{ latitude: bar.latitude, longitude: bar.longitude }}
+              coordinate={{
+                latitude: bar.loc.coordinates[1],
+                longitude: bar.loc.coordinates[0]
+              }}
               title={bar.title}
               description={bar.description}
             >

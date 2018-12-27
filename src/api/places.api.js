@@ -16,6 +16,7 @@ export default class PlacesApi extends Api {
       const response = await this.request(
         `places/near?lat=${lat}&long=${long}`
       );
+      console.log('response', response);
       if (response.message || response.error) {
         return Promise.reject(response);
       }
@@ -28,6 +29,19 @@ export default class PlacesApi extends Api {
   fetchPlace = async id => {
     try {
       const response = await this.request(`place/${id}`);
+      console.log(response);
+      if (response.message || response.error) {
+        return Promise.reject(response);
+      }
+      return response;
+    } catch ({ message }) {
+      throw Error(message);
+    }
+  };
+
+  addPlace = async body => {
+    try {
+      const response = await this.create(body, 'places/add');
       if (response.message || response.error) {
         return Promise.reject(response);
       }

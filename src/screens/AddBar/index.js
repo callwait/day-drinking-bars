@@ -19,49 +19,20 @@ import Styles from './styles'; // importing style file
 import Colors from '../../styles/colors'; // use for style and color
 // import { Icon } from 'react-native-elements';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import ActionButton from 'react-native-action-button'; // use for action button
 import Moment from 'moment';
-import { firebaseApp, BarRef, rootRef, storageRef } from '../Firebase/Firebase';
+import { storageRef } from '../Firebase/Firebase';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import { Content, Icon } from 'native-base';
 import ImagePicker from 'react-native-image-crop-picker';
+import PlacesApi from '../../api/places.api';
+import { getUserLocation } from '../../helpers/location.helper';
+const uuidv1 = require('uuid/v1');
 
-const options = {
-  title: 'Select Avatar',
-  customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-  storageOptions: {
-    skipBackup: true,
-    path: 'images'
-  }
-};
+const Places = new PlacesApi();
 
-const uploadImage = uri => {
-  return new Promise((resolve, reject) => {
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-    const sessionId = new Date().getTime();
-    let uploadBlob = null;
-    const imageRef = storageRef.ref('images').child(`${sessionId}` + '.jpg');
-    let mime = 'image/jpg';
-    fs.readFile(uploadUri, 'base64')
-      .then(data => {
-        return Blob.build(data, { type: `${mime};BASE64` });
-      })
-      .then(blob => {
-        uploadBlob = blob;
-        return imageRef.put(uri, { contentType: mime });
-        //  return imageRef.put(blob, { contentType: mime })
-      })
-      .then(() => {
-        uploadBlob.close();
-        return imageRef.getDownloadURL();
-      })
-      .then(url => {
-        resolve(url);
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
+const defaultZoom = {
+  latitudeDelta: 0.00922 * 0.1,
+  longitudeDelta: 0.00421 * 0.1
 };
 
 export default class AddBar extends React.Component {
@@ -77,18 +48,12 @@ export default class AddBar extends React.Component {
 
     this.state = {
       mapRegion: null,
-      lastLat: null,
-      lastLong: null,
-      barid: '',
       barname: '',
       bardetails: '',
       baraddress: '',
-      createdate: '',
-      updatedate: '',
       isLoading: false,
-      imageUrl: [''],
-      img1: [''],
-      dataSource: ds.cloneWithRows(['', '']),
+      images: [],
+      dataSource: ds.cloneWithRows(['']),
       barimagesDataSource: barimagesDataSource
     };
   }
@@ -119,145 +84,86 @@ export default class AddBar extends React.Component {
     )
   });
 
-  componentDidMount() {
-    this.watchID = navigator.geolocation.watchPosition(
-      position => {
-        // Create the object to update this.state.mapRegion through the onRegionChange function
-        // alert(JSON.stringify(position));
-        let region = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: 0.00922 * 1.5,
-          longitudeDelta: 0.00421 * 1.5
-        };
-        this.onRegionChange(region, region.latitude, region.longitude);
-      },
-      error => console.log(error)
-    );
-  }
-
-  onRegionChange(region, lastLat, lastLong) {
+  onRegionChange(region) {
     this.setState({
-      mapRegion: region,
-      // If there are no new values set the current ones
-      lastLat: lastLat || this.state.lastLat,
-      lastLong: lastLong || this.state.lastLong
+      mapRegion: region
     });
   }
 
-  onMapPress(e) {
-    console.log(e.nativeEvent.coordinate.longitude);
-    let region = {
-      latitude: e.nativeEvent.coordinate.latitude,
-      longitude: e.nativeEvent.coordinate.longitude,
-      latitudeDelta: 0.00922 * 1.5,
-      longitudeDelta: 0.00421 * 1.5
-    };
-    this.onRegionChange(region, region.latitude, region.longitude);
-  }
-
-  uploadImage1() {
-    this.setState({
-      isLoading: true
-    });
-
+  uploadImage() {
     ImagePicker.openPicker({
-      multiple: true
-    }).then(images => {
-      console.log('No of images ...', images);
-      var img = [''];
-      var newimg = [];
-      for (var i = 0; i < images.length; i++) {
-        console.log('No of images ...', images[i].path);
+      width: 400,
+      height: 300,
+      cropping: true
+    })
+      .then(image => {
+        this.setState({
+          isLoading: true,
 
-        newimg.push({ url: images[i].path });
-
-        if (i === 0) {
-          const source = { uri: images[i].path };
-          this.setState({
-            avatarSource: source
+          avatarSource: {
+            uri: image.path,
+            dataSource: this.state.dataSource.cloneWithRows(image.path)
+          }
+        });
+        const imageRef = storageRef.ref('images').child(uuidv1());
+        let mime = 'image/jpg';
+        imageRef
+          .put(image.path, { contentType: mime })
+          .then(() => {
+            return imageRef.getDownloadURL();
+          })
+          .then(url => {
+            console.log('URL', url);
+            this.setState({
+              images: [url],
+              isLoading: false
+            });
           });
-        }
-
-        // uploadImage(images[i].path)
-        //   .then(url => {
-        //     img.push(url);
-        //   })
-        //   .catch(error => console.log(error));
-      }
-
-      this.setState({
-        img1: newimg
+      })
+      .catch(error => {
+        console.log(error);
       });
-
-      this.getdata();
-
-      this.setState({
-        imageUrl: img,
-        isLoading: false
-      });
-    });
   }
 
-  getdata() {
-    var newDs = [];
-    newDs = this.state.img1.slice();
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.img1),
-      img1: newDs
-    });
-    console.log(this.state.dataSource);
-  }
-
-  _addBar() {
+  async _addBar() {
     this.setState({
       isLoading: true
     });
     var date = new Date().toString();
     const { navigate } = this.props.navigation;
-    const barId = rootRef.push().key;
+    const barId = 1;
 
     Moment.locale('en');
     let createddate = new Date();
     this.state.createdate = createddate;
     const barid1 = Moment(createdate).format('DDMMYYYYhhmmss');
 
-    const {
-      barname,
-      bardetails,
-      baraddress,
-      createdate,
-      updatedate,
-      imageUrl
-    } = this.state;
+    const { barname, bardetails, baraddress, createdate, images } = this.state;
 
     const newBar = {
-      bar_id: barid1,
-      bar_name: barname,
-      bar_description: bardetails,
-      bar_address: baraddress,
-      created_date: createddate,
-      updated_date: createddate,
-      bar_gallery: {
-        imageUrl: imageUrl
-      }
+      title: barname,
+      description: bardetails,
+      address: baraddress,
+      latitude: this.state.mapRegion.latitude,
+      longitude: this.state.mapRegion.longitude,
+      images
     };
-
     console.log('newBar', newBar);
 
-    let _this = this;
-    setTimeout(() => {
-      //BarRef.child(barid1).set(newBar);
-
-      _this.setState({
+    try {
+      const bar = await Places.addPlace(newBar);
+      this.refs.toastgreen.show('Bar Added Successfully!!');
+      this.setState({
         isLoading: false
       });
-
-      this.refs.toastgreen.show('Bar Added Successfully!!');
       setTimeout(() => {
         this.props.navigation.goBack();
       }, 2000);
-    }, 5000);
+    } catch (e) {
+      this.setState({
+        isLoading: false
+      });
+    }
   }
 
   checkName() {
@@ -283,6 +189,16 @@ export default class AddBar extends React.Component {
     }
   }
 
+  getCurrentPosition() {
+    getUserLocation().then(position => {
+      this.onRegionChange({
+        latitude: position[0],
+        longitude: position[1],
+        ...defaultZoom
+      });
+    });
+  }
+
   render() {
     let loading = this.state.isLoading;
 
@@ -291,12 +207,16 @@ export default class AddBar extends React.Component {
         <MapView
           style={Styles.mapViewStyle}
           region={this.state.mapRegion}
-          showsUserLocation={true}
+          showsUserLocation={false}
           followUserLocation={true}
+          onMapReady={this.getCurrentPosition.bind(this)}
           onRegionChange={this.onRegionChange.bind(this)}
-          onPress={this.onMapPress.bind(this)}
+          //onPress={this.onMapPress.bind(this)}
         />
-
+        <Image
+          style={Styles.centerMarker}
+          source={require('../../../assets/img/marker.png')}
+        />
         <Content>
           <View style={Styles.bottomView}>
             <TextInput
@@ -342,7 +262,7 @@ export default class AddBar extends React.Component {
             />
 
             <View style={{ alignItems: 'center' }}>
-              <TouchableOpacity onPress={this.uploadImage1.bind(this)}>
+              <TouchableOpacity onPress={this.uploadImage.bind(this)}>
                 <Image
                   style={Styles.addPhotoImage}
                   source={
@@ -359,16 +279,18 @@ export default class AddBar extends React.Component {
                 horizontal={true}
                 dataSource={this.state.dataSource}
                 renderRow={data => (
-                  <View style={Styles.addView}>
-                    <Image
-                      style={Styles.addDefaultImage}
-                      source={
-                        this.state.avatarSource == null
-                          ? require('../../../assets/img/addDefaultImage.png')
-                          : { uri: data.url }
-                      }
-                    />
-                  </View>
+                  <TouchableOpacity onPress={this.uploadImage.bind(this)}>
+                    <View style={Styles.addView}>
+                      <Image
+                        style={Styles.addDefaultImage}
+                        source={
+                          this.state.avatarSource == null
+                            ? require('../../../assets/img/addDefaultImage.png')
+                            : { uri: data.url }
+                        }
+                      />
+                    </View>
+                  </TouchableOpacity>
                 )}
               />
             </View>

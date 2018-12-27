@@ -76,6 +76,10 @@ export default class BarList extends React.Component {
   renderRow = (rowData, sectionID, rowID) => {
     const { navigate } = this.props.navigation;
     console.log('rowData', rowData);
+    let mainImage = require('../../../assets/img/default-photo.png');
+    if (rowData.images && rowData.images[0]) {
+      mainImage = { uri: rowData.images[0] };
+    }
     return (
       <TouchableOpacity
         style={Styles.box}
@@ -84,11 +88,7 @@ export default class BarList extends React.Component {
         <View style={{ flexDirection: 'row' }}>
           <FastImage
             style={Styles.cardimage}
-            source={{
-              uri:
-                'https://www.daydrinkingbars.com/assets/img/items/1542227085.900134_img.jpg',
-              priority: FastImage.priority.normal
-            }}
+            source={mainImage}
             onLoadEnd={() => {
               this.setState({ isLoading: false });
             }}

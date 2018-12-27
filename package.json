@@ -19,6 +19,7 @@
     "react-native-fast-image": "^5.1.1",
     "react-native-fbsdk": "^0.8.0",
     "react-native-firebase": "^5.1.0",
+    "react-native-fs": "^2.13.3",
     "react-native-image-crop-picker": "^0.21.3",
     "react-native-linear-gradient": "^2.4.4",
     "react-native-maps": "^0.22.1",
@@ -26,7 +27,8 @@
     "react-native-ratings": "^6.0.0",
     "react-native-vector-icons": "^6.1.0",
     "react-navigation": "^1.5.11",
-    "rn-fetch-blob": "^0.10.13"
+    "rn-fetch-blob": "^0.10.13",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

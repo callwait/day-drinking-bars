@@ -17,11 +17,11 @@ export default class Api {
     'Content-Type': 'application/json'
   });
 
-  create = async body =>
-    fetch(`${this.backendUrl}/${this.resource}`, {
+  create = (body, path) =>
+    fetch(`${this.backendUrl}/${path || this.resource}`, {
       method: 'POST',
       body: JSON.stringify(body),
-      headers: await this.getHeaders()
+      headers: this.getHeaders()
     }).then(raw => raw.json());
 
   update = async (_id, body) =>

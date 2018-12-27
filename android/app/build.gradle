@@ -150,6 +150,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fs')
     compile project(':react-native-admob')
     implementation 'com.android.support:multidex:1.0.3'
     compile project(':react-native-image-crop-picker')

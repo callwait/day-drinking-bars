@@ -50,6 +50,8 @@ target 'DayDrinking' do
     
     pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
     
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
 end
 
 post_install do |installer|
