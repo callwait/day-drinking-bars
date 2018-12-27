@@ -42,6 +42,9 @@ export default class PlacesApi extends Api {
   addPlace = async body => {
     try {
       const response = await this.create(body, 'places/add');
+      if (response.error === 'Unauthorized') {
+        this.logout();
+      }
       if (response.message || response.error) {
         return Promise.reject(response);
       }

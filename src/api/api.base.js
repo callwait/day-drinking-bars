@@ -1,5 +1,6 @@
 import config from '../../config';
 import { AsyncStorage } from 'react-native';
+import { withNavigation } from 'react-navigation';
 
 /**
  * @name Class Api
@@ -59,4 +60,10 @@ export default class Api {
         params
       )
     ).then(raw => raw.json());
+
+  logout = () => {
+    const { navigate } = this.props.navigation;
+    AsyncStorage.clear();
+    navigate('LogIn');
+  };
 }

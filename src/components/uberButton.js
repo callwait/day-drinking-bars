@@ -24,7 +24,7 @@ const getUberUniversalLink = (
 
 const styles = {
   uberButton: {
-    width: 255,
+    width: 105,
     height: 40,
     backgroundColor: 'black',
     position: 'absolute',
@@ -87,7 +87,7 @@ export default class UberButton extends Component {
     return (
       <Button style={styles.uberButton} onPress={this.handleClick}>
         <Image source={uberLogo} />
-        <Text style={{ color: 'white' }}>Ride There With Uber</Text>
+        <Text style={{ color: 'white' }}>Uber</Text>
       </Button>
     );
   }

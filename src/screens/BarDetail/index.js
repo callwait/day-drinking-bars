@@ -27,8 +27,11 @@ import {
 import FastImage from 'react-native-fast-image';
 import PlacesApi from '../../api/places.api';
 import UberButton from '../../components/uberButton';
+import RatingsApi from '../../api/ratings.api';
 
 const Places = new PlacesApi();
+const Ratings = new RatingsApi();
+
 const RATING_IMAGE = require('../../../assets/img/rating.png');
 
 export default class BarDetail extends React.Component {
@@ -42,7 +45,8 @@ export default class BarDetail extends React.Component {
       bariImages: [],
       isLoading: false,
       id: state.params.id,
-      placeInfo: {}
+      placeInfo: {},
+      rating: 0
     };
   }
 
@@ -95,6 +99,12 @@ export default class BarDetail extends React.Component {
   /**
    * view design with list view
    */
+  addRating = () => {
+    const { id } = this.state.placeInfo;
+    Ratings.add({ place: id }).then(e => {
+      this.setState({ rating: e.count });
+    });
+  };
 
   render() {
     let loading = this.state.isLoading;
@@ -128,7 +138,9 @@ export default class BarDetail extends React.Component {
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('Review')}
           >
-            <Text style={Styles.RatingText}>0.0/0.0 - (0 TOAST)</Text>
+            <Text style={Styles.RatingText}>
+              0.0/0.0 - ({this.state.rating} TOAST)
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -210,7 +222,8 @@ export default class BarDetail extends React.Component {
             />
           }
           onPress={() =>
-            this.props.navigation.navigate('AddReview', { id: this.state.id })
+            //this.props.navigation.navigate('AddReview', { id: this.state.id })
+            this.addRating()
           }
         />
 
