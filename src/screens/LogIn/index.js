@@ -19,12 +19,7 @@ import Colors from '../../styles/colors'; // use for style and color
 const { width, height } = Dimensions.get('window'); // Detect screen width and height
 import { SocialIcon, FormValidationMessage } from 'react-native-elements'; // use for social icon
 import { NavigationActions } from 'react-navigation';
-import {
-  firebaseApp,
-  userRef,
-  rootRef,
-  credentialRef
-} from '../../components/Firebase'; // use for firebase
+import { firebaseApp, userRef } from '../../components/Firebase'; // use for firebase
 import {
   LoginButton,
   AccessToken,
@@ -177,6 +172,15 @@ export default class LogIn extends React.Component {
                   AsyncStorage.setItem('UserId', child.val().UserId);
                   AsyncStorage.setItem('UserFullName', child.val().FullName);
                   AsyncStorage.setItem('Email', child.val().Email);
+
+                  firebaseApp.onAuthStateChanged(function(user) {
+                    if (user) {
+                      user.getIdToken().then(function(data) {
+                        console.log('>>>>>> token', data);
+                        AsyncStorage.setItem('token', data);
+                      });
+                    }
+                  });
 
                   _this.setState({
                     isLoading: false

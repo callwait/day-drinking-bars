@@ -1,4 +1,5 @@
 import config from '../../config';
+import { AsyncStorage } from 'react-native';
 
 /**
  * @name Class Api
@@ -13,15 +14,16 @@ export default class Api {
   }
 
   getHeaders = async () => ({
+    authorization: (await AsyncStorage.getItem('token')) || '',
     Accept: 'application/json',
     'Content-Type': 'application/json'
   });
 
-  create = (body, path) =>
+  create = async (body, path) =>
     fetch(`${this.backendUrl}/${path || this.resource}`, {
       method: 'POST',
       body: JSON.stringify(body),
-      headers: this.getHeaders()
+      headers: await this.getHeaders()
     }).then(raw => raw.json());
 
   update = async (_id, body) =>
@@ -47,12 +49,12 @@ export default class Api {
       headers: await this.getHeaders()
     });
 
-  request = (url, params) =>
+  request = async (url, params) =>
     fetch(
       `${this.backendUrl}/${url}`,
       Object.assign(
         {
-          headers: this.getHeaders()
+          headers: await this.getHeaders()
         },
         params
       )

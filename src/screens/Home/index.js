@@ -1,20 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  StyleSheet,
   View,
   Text,
-  Button,
   TouchableOpacity,
-  ListView,
-  Dimensions,
   Image,
   AsyncStorage,
-  ImageBackground,
   TouchableHighlight
 } from 'react-native';
 import Styles from './styles'; // importing style file
 import Colors from '../../styles/colors'; // use for style and color
-import { Content, Icon } from 'native-base';
+import { Icon } from 'native-base';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { AdMobBanner } from 'react-native-admob';
 import ActionButton from 'react-native-action-button'; // use for action button
