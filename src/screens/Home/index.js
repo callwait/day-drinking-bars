@@ -62,7 +62,7 @@ export default class Home extends React.Component {
       lastLat: null,
       lastLong: null,
       bars: [],
-      username: 'none'
+      username: false
     };
   }
 
@@ -114,10 +114,6 @@ export default class Home extends React.Component {
     this.getPlaces(mapRegion.latitude, mapRegion.longitude);
   }
 
-  onMapPress(e) {
-    //this.onRegionChange(e.nativeEvent);
-  }
-
   onPress = () => {
     alert('ads');
   };
@@ -128,7 +124,7 @@ export default class Home extends React.Component {
   static navigationOptions = ({ navigation, screenProps }) => {
     const name = navigation.getParam('username');
     return {
-      title: 'Welcome Back, ' + name,
+      title: name ? 'Welcome Back, ' + name : '',
       headerTitleStyle: { color: Colors.black },
       headerStyle: {
         backgroundColor: 'transparent',
@@ -187,7 +183,6 @@ export default class Home extends React.Component {
           followUserLocation={true}
           onMapReady={this.getCurrentPosition.bind(this)}
           onRegionChangeComplete={this.onRegionChange.bind(this)}
-          onPress={this.onMapPress.bind(this)}
         >
           {this.state.bars.map(bar => (
             <MapView.Marker

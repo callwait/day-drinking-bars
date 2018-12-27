@@ -10,7 +10,7 @@ import {
 import Styles from './styles'; // importing style file
 import Colors from '../../styles/colors'; // use for style and color
 import { Rating, AirbnbRating } from 'react-native-ratings';
-import { firebaseApp, ReviewRef, rootRef, BarRef } from '../Firebase/Firebase';
+import { firebaseApp, ReviewRef, rootRef, BarRef } from '../../components/Firebase';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import Moment from 'moment';
 import { Content, Icon } from 'native-base';

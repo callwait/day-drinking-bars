@@ -29,7 +29,12 @@ export default class BarList extends React.Component {
     const BarlistDataSource = new ListView.DataSource({
       rowHasChanged: (row1, row2) => row1 !== row2
     });
-    const places = this.props.navigation.getParam('places').slice(0, 50);
+    let places = this.props.navigation.getParam('places');
+    if (places) {
+      places = places.slice(0, 50);
+    } else {
+      places = [];
+    }
     this.state = {
       isLoading: false,
       paginate: 0,
@@ -41,7 +46,7 @@ export default class BarList extends React.Component {
    *  set navigation bar with icon
    */
   static navigationOptions = ({ navigation, screenProps }) => ({
-    title: 'ListView',
+    title: 'List View',
     headerLeft: (
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <View style={{ padding: 10 }}>

@@ -18,7 +18,12 @@ import { Rating } from 'react-native-elements';
 import styles from '../Home/styles';
 import { Button } from 'react-native-elements';
 import ActionButton from 'react-native-action-button'; // use for action button
-import { firebaseApp, userRef, rootRef, BarRef } from '../Firebase/Firebase'; // use for firebase
+import {
+  firebaseApp,
+  userRef,
+  rootRef,
+  BarRef
+} from '../../components/Firebase'; // use for firebase
 import FastImage from 'react-native-fast-image';
 import PlacesApi from '../../api/places.api';
 import UberButton from '../../components/uberButton';

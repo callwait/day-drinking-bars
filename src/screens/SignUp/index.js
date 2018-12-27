@@ -16,7 +16,7 @@ import {
 
 import Styles from './styles'; // importing style file
 import Colors from '../../styles/colors';  // use for style and color
-import {firebaseApp,userRef,rootRef} from '../Firebase/Firebase'; // use for firebase
+import {firebaseApp,userRef,rootRef} from '../../components/Firebase'; // use for firebase
 import { Content, Icon } from "native-base";
 const { width, height } = Dimensions.get('window'); // Detect screen width and height
 import {FormValidationMessage } from 'react-native-elements' // use for form elements

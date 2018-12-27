@@ -20,7 +20,7 @@ import Colors from '../../styles/colors'; // use for style and color
 // import { Icon } from 'react-native-elements';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Moment from 'moment';
-import { storageRef } from '../Firebase/Firebase';
+import { storageRef } from '../../components/Firebase';
 import Toast, { DURATION } from 'react-native-easy-toast';
 import { Content, Icon } from 'native-base';
 import ImagePicker from 'react-native-image-crop-picker';
