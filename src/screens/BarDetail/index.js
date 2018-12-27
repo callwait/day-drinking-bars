@@ -21,45 +21,11 @@ import ActionButton from 'react-native-action-button'; // use for action button
 import { firebaseApp, userRef, rootRef, BarRef } from '../Firebase/Firebase'; // use for firebase
 import FastImage from 'react-native-fast-image';
 import PlacesApi from '../../api/places.api';
+import UberButton from '../../components/uberButton';
 
 const Places = new PlacesApi();
 const RATING_IMAGE = require('../../../assets/img/rating.png');
-// import FastImage from 'react-native-fast-image';
-// import Masonry from 'react-native-masonry';
 
-// let data = [
-//   {
-//     data: {
-//       caption: '',
-//       user: {
-//         name: ''
-//       },
-//     },
-//     uri: 'https://www.google.co.in/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwiB_9eZ0ezeAhXQWisKHRtOB3IQjRx6BAgBEAU&url=https%3A%2F%2Fwww.buddhabar.com%2F&psig=AOvVaw1C4a84T_sQs7dpWycMqLPb&ust=1543135316525910',
-//     renderHeader: (data) => {
-//       return (
-//         <View key='brick-footer' style={styles.headerTop}>
-//           <Image
-//             source={require('../../../assets/img/Experience.png')}
-//             style={styles.userPic}/>
-//         </View>
-//       )
-//     }
-//   },
-//   // {
-//   //   uri: 'https://s-media-cache-ak0.pinimg.com/736x/b1/21/df/b121df29b41b771d6610dba71834e512.jpg',
-//   // },
-//   // {
-//   //   uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQpD8mz-2Wwix8hHbGgR-mCFQVFTF7TF7hU05BxwLVO1PS5j-rZA',
-//   // },
-//   // {
-//   //   uri: 'https://s-media-cache-ak0.pinimg.com/736x/5a/15/0c/5a150cf9d5a825c8b5871eefbeda8d14.jpg'
-//   // }
-// ];
-
-/**
- *  set constuctor and initial configuration of page
- */
 export default class BarDetail extends React.Component {
   constructor(props) {
     super(props);
@@ -236,6 +202,13 @@ export default class BarDetail extends React.Component {
           onPress={() =>
             this.props.navigation.navigate('AddReview', { id: this.state.id })
           }
+        />
+
+        <UberButton
+          destination={[
+            this.state.placeInfo.latitude,
+            this.state.placeInfo.longitude
+          ]}
         />
 
         <Modal

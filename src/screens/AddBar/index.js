@@ -179,11 +179,11 @@ export default class AddBar extends React.Component {
           });
         }
 
-        uploadImage(images[i].path)
-          .then(url => {
-            img.push(url);
-          })
-          .catch(error => console.log(error));
+        // uploadImage(images[i].path)
+        //   .then(url => {
+        //     img.push(url);
+        //   })
+        //   .catch(error => console.log(error));
       }
 
       this.setState({
@@ -243,9 +243,11 @@ export default class AddBar extends React.Component {
       }
     };
 
+    console.log('newBar', newBar);
+
     let _this = this;
     setTimeout(() => {
-      BarRef.child(barid1).set(newBar);
+      //BarRef.child(barid1).set(newBar);
 
       _this.setState({
         isLoading: false

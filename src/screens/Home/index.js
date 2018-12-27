@@ -19,9 +19,14 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { AdMobBanner } from 'react-native-admob';
 import ActionButton from 'react-native-action-button'; // use for action button
 import PlacesApi from '../../api/places.api';
+import { getUserLocation } from '../../helpers/location.helper';
 
 const Places = new PlacesApi();
-
+const defaultZoom = {
+  latitudeDelta: 0.00922 * 1.5,
+  longitudeDelta: 0.00421 * 1.5
+};
+let debounce = false;
 // import flagPinkImg from '../../assets/flagPinkImg';
 
 /**
@@ -56,51 +61,42 @@ export default class Home extends React.Component {
       mapRegion: null,
       lastLat: null,
       lastLong: null,
-      bars: []
+      bars: [],
+      username: 'none'
     };
   }
 
-  componentDidMount() {
-    this.getPlaces();
-    this.props.navigation.setParams({
-      getCurrentPosition: this.getCurrentPosition.bind(this)
-    });
-
-    this.watchID = navigator.geolocation.watchPosition(
-      position => {
-        // Create the object to update this.state.mapRegion through the onRegionChange function
-        this.onRegionChange(position);
-      },
-      error => console.log(error)
+  async componentDidMount() {
+    await AsyncStorage.getItem('UserFullName').then(
+      function(value) {
+        this.setState({ username: value });
+        this.props.navigation.setParams({
+          getCurrentPosition: this.getCurrentPosition.bind(this),
+          username: value
+        });
+      }.bind(this)
     );
   }
 
-  /**
-   * call when view will ready to load
-   */
-  async componentWillMount() {
-    var value = await AsyncStorage.getItem('UserId');
-    console.log('UserId....', value);
-    this.setState({
-      FirstLogin: value
-    });
-  }
-
   getCurrentPosition() {
-    navigator.geolocation.getCurrentPosition(position => {
-      position = {
-        coords: {
-          latitude: '41.890312',
-          longitude: '-87.630767'
-        }
-      };
-      this.onRegionChange(position);
+    getUserLocation().then(position => {
+      this.onRegionChange({
+        latitude: 41.890312, //position[0],
+        longitude: -87.630767, //position[1],
+        ...defaultZoom
+      });
     });
   }
 
-  getPlaces(lat = '41.890312', long = '-87.630767') {
+  getPlaces(lat, long) {
+    const diff = new Date() - debounce;
+    if (diff < 200) {
+      return;
+    }
+    debounce = new Date();
     Places.getNearPlaces(lat, long)
       .then(bars => {
+        console.log('ger bars2');
         this.setState({ bars });
         this.props.navigation.setParams({
           places: bars
@@ -111,21 +107,10 @@ export default class Home extends React.Component {
       });
   }
 
-  onRegionChange(position) {
-    if (!position) return;
-    let mapRegion = {
-      latitudeDelta: 0.00922 * 1.5,
-      longitudeDelta: 0.00421 * 1.5
-    };
-    if (position.coords) {
-      mapRegion.latitude = position.coords.latitude;
-      mapRegion.longitude = position.coords.longitude;
-    } else {
-      mapRegion.latitude = position.latitude;
-      mapRegion.longitude = position.longitude;
-    }
+  onRegionChange(mapRegion) {
+    if (typeof mapRegion.latitude !== 'number') return;
     this.setState({ mapRegion });
-    console.log('position', mapRegion);
+    console.log('mapRegion', mapRegion);
     this.getPlaces(mapRegion.latitude, mapRegion.longitude);
   }
 
@@ -140,49 +125,52 @@ export default class Home extends React.Component {
   /**
    *  set navigation bar with icon
    */
-  static navigationOptions = ({ navigation, screenProps }) => ({
-    title: 'Welcome Back, Anthony',
-    headerTitleStyle: { color: Colors.black },
-    headerStyle: {
-      backgroundColor: 'transparent',
-      borderBottomColor: 'transparent',
-      position: 'absolute',
-      height: 50,
-      top: 0,
-      left: 0,
-      right: 0
-    },
-    headerTintColor: '#fff',
-    headerLeft: (
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('BarList', {
-            places: navigation.state.params.places
-          })
-        }
-      >
-        <View style={{ padding: 10 }}>
-          <Icon
-            type="Feather"
-            name="menu"
-            style={{ color: '#000', fontSize: 25 }}
-          />
-        </View>
-      </TouchableOpacity>
-    ),
-    headerRight: (
-      <TouchableOpacity
-        onPress={() => navigation.state.params.getCurrentPosition()}
-      >
-        <View style={{ padding: 10 }}>
-          <Image
-            style={{ height: 20, width: 20, paddingRight: 5 }}
-            source={require('../../../assets/img/direction.png')}
-          />
-        </View>
-      </TouchableOpacity>
-    )
-  });
+  static navigationOptions = ({ navigation, screenProps }) => {
+    const name = navigation.getParam('username');
+    return {
+      title: 'Welcome Back, ' + name,
+      headerTitleStyle: { color: Colors.black },
+      headerStyle: {
+        backgroundColor: 'transparent',
+        borderBottomColor: 'transparent',
+        position: 'absolute',
+        height: 50,
+        top: 0,
+        left: 0,
+        right: 0
+      },
+      headerTintColor: '#fff',
+      headerLeft: (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('BarList', {
+              places: navigation.state.params.places
+            })
+          }
+        >
+          <View style={{ padding: 10 }}>
+            <Icon
+              type="Feather"
+              name="menu"
+              style={{ color: '#000', fontSize: 25 }}
+            />
+          </View>
+        </TouchableOpacity>
+      ),
+      headerRight: (
+        <TouchableOpacity
+          onPress={() => navigation.state.params.getCurrentPosition()}
+        >
+          <View style={{ padding: 10 }}>
+            <Image
+              style={{ height: 20, width: 20, paddingRight: 5 }}
+              source={require('../../../assets/img/direction.png')}
+            />
+          </View>
+        </TouchableOpacity>
+      )
+    };
+  };
 
   /**
    * view design with list view
@@ -197,6 +185,7 @@ export default class Home extends React.Component {
           region={this.state.mapRegion}
           showsUserLocation={true}
           followUserLocation={true}
+          onMapReady={this.getCurrentPosition.bind(this)}
           onRegionChangeComplete={this.onRegionChange.bind(this)}
           onPress={this.onMapPress.bind(this)}
         >
