@@ -35,26 +35,23 @@ const defaultZoom = {
   longitudeDelta: 0.00421 * 0.1
 };
 
+const ds = new ListView.DataSource({
+  rowHasChanged: (r1, r2) => r1 !== r2
+});
+
 export default class AddBar extends React.Component {
   constructor(props) {
     super(props);
-    const barimagesDataSource = new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2
-    });
 
-    const ds = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2
-    });
-
+    const images = [false, false, false, false, false, false];
     this.state = {
       mapRegion: null,
       barname: '',
       bardetails: '',
       baraddress: '',
       isLoading: false,
-      images: [],
-      dataSource: ds.cloneWithRows(['']),
-      barimagesDataSource: barimagesDataSource
+      images,
+      dataSource: ds.cloneWithRows(images.slice(1))
     };
   }
 
@@ -90,7 +87,8 @@ export default class AddBar extends React.Component {
     });
   }
 
-  uploadImage() {
+  uploadImage(id) {
+    console.log('id', id);
     ImagePicker.openPicker({
       width: 400,
       height: 300,
@@ -98,12 +96,7 @@ export default class AddBar extends React.Component {
     })
       .then(image => {
         this.setState({
-          isLoading: true,
-
-          avatarSource: {
-            uri: image.path,
-            dataSource: this.state.dataSource.cloneWithRows(image.path)
-          }
+          isLoading: true
         });
         const imageRef = storageRef.ref('images').child(uuidv1());
         let mime = 'image/jpg';
@@ -114,8 +107,10 @@ export default class AddBar extends React.Component {
           })
           .then(url => {
             console.log('URL', url);
+            this.state.images[id] = url;
             this.setState({
-              images: [url],
+              images: this.state.images,
+              dataSource: ds.cloneWithRows(this.state.images.slice(1)),
               isLoading: false
             });
           });
@@ -129,16 +124,9 @@ export default class AddBar extends React.Component {
     this.setState({
       isLoading: true
     });
-    var date = new Date().toString();
     const { navigate } = this.props.navigation;
-    const barId = 1;
 
-    Moment.locale('en');
-    let createddate = new Date();
-    this.state.createdate = createddate;
-    const barid1 = Moment(createdate).format('DDMMYYYYhhmmss');
-
-    const { barname, bardetails, baraddress, createdate, images } = this.state;
+    const { barname, bardetails, baraddress, images } = this.state;
 
     const newBar = {
       title: barname,
@@ -160,6 +148,7 @@ export default class AddBar extends React.Component {
         this.props.navigation.goBack();
       }, 2000);
     } catch (e) {
+      console.log(e);
       this.setState({
         isLoading: false
       });
@@ -201,7 +190,7 @@ export default class AddBar extends React.Component {
 
   render() {
     let loading = this.state.isLoading;
-
+    console.log(this.state.images);
     return (
       <View style={Styles.container}>
         <MapView
@@ -211,7 +200,6 @@ export default class AddBar extends React.Component {
           followUserLocation={true}
           onMapReady={this.getCurrentPosition.bind(this)}
           onRegionChange={this.onRegionChange.bind(this)}
-          //onPress={this.onMapPress.bind(this)}
         />
         <Image
           style={Styles.centerMarker}
@@ -262,36 +250,42 @@ export default class AddBar extends React.Component {
             />
 
             <View style={{ alignItems: 'center' }}>
-              <TouchableOpacity onPress={this.uploadImage.bind(this)}>
+              <TouchableOpacity onPress={() => this.uploadImage(0)}>
                 <Image
                   style={Styles.addPhotoImage}
                   source={
-                    this.state.avatarSource == null
+                    !this.state.images[0]
                       ? require('../../../assets/img/defaultaddPhoto.png')
-                      : this.state.avatarSource
+                      : { uri: this.state.images[0] }
                   }
                 />
               </TouchableOpacity>
             </View>
             <View style={Styles.addView}>
               <ListView
+                //key={this.state.images}
                 removeClippedSubviews={false}
                 horizontal={true}
                 dataSource={this.state.dataSource}
-                renderRow={data => (
-                  <TouchableOpacity onPress={this.uploadImage.bind(this)}>
-                    <View style={Styles.addView}>
-                      <Image
-                        style={Styles.addDefaultImage}
-                        source={
-                          this.state.avatarSource == null
-                            ? require('../../../assets/img/addDefaultImage.png')
-                            : { uri: data.url }
-                        }
-                      />
-                    </View>
-                  </TouchableOpacity>
-                )}
+                renderRow={(data, section, index) => {
+                  console.log(index, data);
+                  return (
+                    <TouchableOpacity
+                      onPress={() => this.uploadImage(parseInt(index) + 1)}
+                    >
+                      <View style={Styles.addView}>
+                        <Image
+                          style={Styles.addDefaultImage}
+                          source={
+                            !data
+                              ? require('../../../assets/img/addDefaultImage.png')
+                              : { uri: data }
+                          }
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  );
+                }}
               />
             </View>
             <TouchableOpacity

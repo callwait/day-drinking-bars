@@ -42,11 +42,11 @@ export default class BarDetail extends React.Component {
     this.state = {
       columns: 2,
       padding: 5,
-      bariImages: [],
       isLoading: false,
       id: state.params.id,
       placeInfo: {},
-      rating: 0
+      rating: 0,
+      showMore: false
     };
   }
 
@@ -105,13 +105,22 @@ export default class BarDetail extends React.Component {
       this.setState({ rating: e.count });
     });
   };
-
   render() {
     let loading = this.state.isLoading;
+    const images = this.state.placeInfo.images;
+    let bariImages = [];
+    if (images) {
+      for (let i of images) {
+        if (i) {
+          bariImages.push(i);
+        }
+      }
+      console.log('bariImages', bariImages);
+    }
 
     let mainImage = false;
-    if (this.state.placeInfo.images && this.state.placeInfo.images[0]) {
-      mainImage = this.state.placeInfo.images[0];
+    if (images && images[0]) {
+      mainImage = images[0];
     }
     return (
       <View style={Styles.container}>
@@ -151,7 +160,9 @@ export default class BarDetail extends React.Component {
         <View style={Styles.galleryView}>
           <Text style={Styles.gallertText}>Bar Gallery</Text>
 
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.setState({ showMore: !this.state.showMore })}
+          >
             <Text style={Styles.showmoreText}> Show More </Text>
           </TouchableOpacity>
         </View>
@@ -159,11 +170,11 @@ export default class BarDetail extends React.Component {
         <View>
           <View style={Styles.atmosphereView}>
             <View>
-              {mainImage && (
+              {bariImages[0] && (
                 <FastImage
                   style={Styles.atmosphereImage}
                   source={{
-                    uri: mainImage,
+                    uri: bariImages[0],
                     priority: FastImage.priority.normal
                   }}
                   onLoadEnd={() => {
@@ -176,11 +187,11 @@ export default class BarDetail extends React.Component {
 
             <View style={{ flexDirection: 'column' }}>
               <View>
-                {this.state.bariImages[1] != null ? (
+                {bariImages[1] != null ? (
                   <FastImage
                     style={Styles.streetViewImage}
                     source={{
-                      uri: this.state.bariImages[1],
+                      uri: bariImages[1],
                       priority: FastImage.priority.normal
                     }}
                     resizeMode={FastImage.resizeMode.stretch}
@@ -188,21 +199,21 @@ export default class BarDetail extends React.Component {
                 ) : null}
               </View>
               <View style={{ flexDirection: 'row' }}>
-                {this.state.bariImages[2] != null ? (
+                {bariImages[2] != null ? (
                   <FastImage
                     style={Styles.familyImage}
                     source={{
-                      uri: this.state.bariImages[2],
+                      uri: bariImages[2],
                       priority: FastImage.priority.normal
                     }}
                     resizeMode={FastImage.resizeMode.stretch}
                   />
                 ) : null}
-                {this.state.bariImages[3] != null ? (
+                {bariImages[3] != null ? (
                   <FastImage
                     style={Styles.moreImage}
                     source={{
-                      uri: this.state.bariImages[3],
+                      uri: bariImages[3],
                       priority: FastImage.priority.normal
                     }}
                     resizeMode={FastImage.resizeMode.stretch}
@@ -211,6 +222,41 @@ export default class BarDetail extends React.Component {
               </View>
             </View>
           </View>
+
+          {this.state.showMore && (
+            <View style={Styles.atmosphereView}>
+              <View>
+                {bariImages[4] && (
+                  <FastImage
+                    style={Styles.atmosphereImage}
+                    source={{
+                      uri: bariImages[4],
+                      priority: FastImage.priority.normal
+                    }}
+                    onLoadEnd={() => {
+                      this.setState({ isLoading: false });
+                    }}
+                    resizeMode={FastImage.resizeMode.stretch}
+                  />
+                )}
+              </View>
+              <View>
+                {bariImages[5] && (
+                  <FastImage
+                    style={Styles.atmosphereImageLast}
+                    source={{
+                      uri: bariImages[5],
+                      priority: FastImage.priority.normal
+                    }}
+                    onLoadEnd={() => {
+                      this.setState({ isLoading: false });
+                    }}
+                    resizeMode={FastImage.resizeMode.stretch}
+                  />
+                )}
+              </View>
+            </View>
+          )}
         </View>
 
         <ActionButton

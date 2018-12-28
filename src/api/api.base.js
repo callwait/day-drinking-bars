@@ -1,6 +1,5 @@
 import config from '../../config';
-import { AsyncStorage } from 'react-native';
-import { withNavigation } from 'react-navigation';
+import { AsyncStorage, Alert } from 'react-native';
 
 /**
  * @name Class Api
@@ -62,8 +61,12 @@ export default class Api {
     ).then(raw => raw.json());
 
   logout = () => {
-    const { navigate } = this.props.navigation;
+    //const { navigate } = this.props.navigation;
     AsyncStorage.clear();
-    navigate('LogIn');
+    //navigate('LogIn');
+
+    Alert.alert('', 'jwt token was expired, try re-login', {
+      cancelable: false
+    });
   };
 }
